@@ -16,10 +16,10 @@ io.on('connection', socket => {
         socket.emit('USER-JOIN')
         if (users[roomID]) {
             const length = users[roomID].length;
-            if (length === 4) {
-                socket.emit("room full");
-                return;
-            }
+            // if (length === 4) {
+            //     socket.emit("room full");
+            //     return;
+            // }
             users[roomID].push(socket.id);
         } else {
             users[roomID] = [socket.id];
@@ -27,7 +27,14 @@ io.on('connection', socket => {
         socketToRoom[socket.id] = roomID;
         const usersInThisRoom = users[roomID].filter(id => id !== socket.id);
 
+        
         socket.emit("all users", usersInThisRoom);
+        socket.on('message', (message) => {
+            // io.to(roomID).emit('createMessage', message)
+           socket.emit('createMessage', message) 
+           socket.emit('test')
+           console.log(message);
+        }); 
     });
 
     socket.on("sending signal", payload => {
